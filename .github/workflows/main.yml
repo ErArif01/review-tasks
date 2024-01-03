@@ -1,0 +1,29 @@
+name: Cross-Repository Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Workflow in Another Repository
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CROSS_REPO_PAT }}
+          repository: <username>/<repository-name>
+          event-type: trigger-cross-repo-workflow
+          client-payload: '{"key": "value"}'
+
+  cross_repo_workflow:
+    needs: trigger
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Add your workflow steps here
